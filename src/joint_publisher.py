@@ -32,8 +32,8 @@ class JointPublisher:
             joint_msg.velocity = joint_velocities
 
             # Publishes the data to the ROS topic
-            self.joint_pub.publish(joints)
-            
+            self.joint_pub.publish(joint_msg)
+
             r.sleep()
 
 if __name__ == '__main__':
