@@ -14,11 +14,11 @@ class JointPublisher:
         self.joint_pub = rospy.Publisher("/joints", JointState, queue_size=10)
 
         # Connects to the robot
-        self.rtde_c = RTDEControlInterface("0.0.0.0")
-        self.rtde_r = RTDEReceiveInterface("0.0.0.0")
+        #self.rtde_c = RTDEControlInterface("192.168.50.85")
+        self.rtde_r = RTDEReceiveInterface("192.168.50.85")
 
     def main(self):
-        r = rospy.Rate(1)
+        r = rospy.Rate(60)
         while not rospy.is_shutdown():
             # Gets actual joint data
             joint_positions = self.rtde_r.getActualQ()
