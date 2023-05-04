@@ -7,15 +7,17 @@ from rtde_receive import RTDEReceiveInterface
 from rtde_io import RTDEIOInterface
 
 class JointPublisher:
-    def __init__(self):
+    def __init__(self, ip=None):
         rospy.init_node("joint_publisher", anonymous=False)
+
+        self.ip = rospy.get_param("/robot_ip")
 
         # Creates a publisher for the "/joints" ROS topic
         self.joint_pub = rospy.Publisher("/joints", JointState, queue_size=10)
 
         # Connects to the robot
-        #self.rtde_c = RTDEControlInterface("192.168.50.85")
-        self.rtde_r = RTDEReceiveInterface("192.168.50.85")
+        #self.rtde_c = RTDEControlInterface(self.ip)
+        self.rtde_r = RTDEReceiveInterface(self.ip)
 
     def main(self):
         r = rospy.Rate(60)

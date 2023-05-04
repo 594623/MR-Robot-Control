@@ -1,0 +1,6 @@
+<launch>
+    <param name="robot_ip" type="string" value="172.31.1.165"/>
+
+    <node pkg="mr_robot_control" name="collision_subscriber" type="collision_subscriber.py" output="screen"/>
+    <node pkg="mr_robot_control" name="joint_publisher" type="joint_publisher.py" output="screen"/>
+</launch>
