@@ -9,6 +9,7 @@ project(mr_robot_control)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  geometry_msgs
   sensor_msgs
   std_msgs
 )
