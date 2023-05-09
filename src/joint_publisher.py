@@ -11,6 +11,7 @@ class JointPublisher:
         rospy.init_node("joint_publisher", anonymous=False)
 
         self.ip = rospy.get_param("/robot_ip")
+        rospy.set_param("/ur_safety_status", -1)
 
         # Creates a publisher for the "/joints" ROS topic
         self.joint_pub = rospy.Publisher("/joints", JointState, queue_size=10)
@@ -22,6 +23,10 @@ class JointPublisher:
     def main(self):
         r = rospy.Rate(60)
         while not rospy.is_shutdown():
+            # Gets safety status
+            rospy.set_param("/ur_safety_status", self.rtde_r.getSafetyMode())
+                
+
             # Gets actual joint data
             joint_positions = self.rtde_r.getActualQ()
             joint_velocities = self.rtde_r.getActualQd()
