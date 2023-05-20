@@ -3,7 +3,6 @@
 import rospy
 from geometry_msgs.msg import Vector3
 from rtde_control import RTDEControlInterface
-from rtde_io import RTDEIOInterface
 
 class CollisionSubscriber:
     def __init__(self):
@@ -25,7 +24,7 @@ class CollisionSubscriber:
 
         self.force = 10 #N
 
-        # TODO: Make last_state_change count time since the robot switched between teach and force mode
+        # Currently unused, can be used to count time since last state change (to see if it gets stuck in force mode)
         self.last_state_change = 0
 
         # Creates a subscriber for the "/collision" ROS topic
@@ -35,9 +34,6 @@ class CollisionSubscriber:
         self.rtde_c = RTDEControlInterface(self.ip)
         self.connected = True
 
-        #self.rtde_io = RTDEIOInterface(self.ip)
-
-        #if self.check_connection():
         self.rtde_c.teachMode()
 
     def clbk_collision(self, msg):
@@ -55,11 +51,9 @@ class CollisionSubscriber:
                 self.wrench[2] = self.force * msg.y
                 # Enables force mode
                 self.force_mode_enabled = True
-                #if self.check_connection():
+
                 self.rtde_c.forceMode(self.task_frame, self.selection_vector, self.wrench, self.force_type, self.limits)
                 self.rtde_c.forceModeSetDamping(self.damping)
-                #self.rtde_io.setStandardDigitalOut(0, True)
-                #self.rtde_c.triggerProtectiveStop()
         else:
             self.collisions -= 1
 
@@ -68,24 +62,12 @@ class CollisionSubscriber:
 
             if self.collisions == 0:
                 print("disabling force mode")
-                # TODO: Disable force mode
                 self.force_mode_enabled = False
-                #if self.check_connection():
+
                 self.rtde_c.forceModeStop()
                 self.rtde_c.teachMode()
 
         print(str(self.collisions) + " collisions tracked")
-
-#    def check_connection(self):
-#        if self.rtde_c.isConnected():
-#            return True
-#        else:
-#            print("No connection. Reconnecting...")
-#            if self.rtde_c.reconnect():
-#                print("Reconnected!")
-#                return True
-#            else:
-#                return False
 
     def reset_modes(self):
         if self.force_mode_enabled:
@@ -119,11 +101,10 @@ class CollisionSubscriber:
     def main(self):
         r = rospy.Rate(1) # Hz
         while not rospy.is_shutdown():
-            #self.reset_modes()
             new_safety_status = rospy.get_param("/ur_safety_status")
             if self.safety_status != new_safety_status:
                 self.switch_safety_status(new_safety_status)
-            #self.check_connection()
+
             r.sleep()
 
         self.rtde_c.forceModeStop()
