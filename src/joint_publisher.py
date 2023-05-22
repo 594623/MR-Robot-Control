@@ -2,9 +2,7 @@
 
 import rospy
 from sensor_msgs.msg import JointState
-from rtde_control import RTDEControlInterface
 from rtde_receive import RTDEReceiveInterface
-from rtde_io import RTDEIOInterface
 
 class JointPublisher:
     def __init__(self, ip=None):
@@ -17,7 +15,6 @@ class JointPublisher:
         self.joint_pub = rospy.Publisher("/joints", JointState, queue_size=10)
 
         # Connects to the robot
-        #self.rtde_c = RTDEControlInterface(self.ip)
         self.rtde_r = RTDEReceiveInterface(self.ip)
 
     def main(self):
